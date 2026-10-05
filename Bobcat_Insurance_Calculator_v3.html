@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Bobcat Insurance Calculator</title>
+<style>
+  :root{
+    --navy:#0b2e4a;
+    --navy-deep:#071f33;
+    --steel:#4d6a80;
+    --amber:#d98e2b;
+    --paper:#f3f1ec;
+    --card:#ffffff;
+    --line:#e3ded3;
+    --ink:#1c2a33;
+    --muted:#6b7a83;
+    --good:#1f6f5c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+  .wrap{width:100%;max-width:460px;}
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  h1{
+    font-size:22px;
+    line-height:1.25;
+    margin:0 0 18px;
+    color:var(--navy-deep);
+    font-weight:800;
+    letter-spacing:-.01em;
+  }
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:20px 18px;
+    box-shadow:0 1px 3px rgba(11,46,74,.06), 0 10px 30px rgba(11,46,74,.08);
+    border:1px solid var(--line);
+  }
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:var(--steel);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin-bottom:6px;
+  }
+  .inputrow{
+    display:flex;
+    align-items:center;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:#fbfaf7;
+    overflow:hidden;
+    transition:border-color .15s;
+  }
+  .inputrow:focus-within{border-color:var(--navy);}
+  .inputrow .prefix{
+    padding:0 10px;
+    color:var(--muted);
+    font-weight:700;
+    font-size:15px;
+    border-right:1px solid var(--line);
+    background:#f1efe9;
+    align-self:stretch;
+    display:flex;
+    align-items:center;
+  }
+  input[type=number]{
+    -moz-appearance:textfield;
+    width:100%;
+    border:none;
+    background:transparent;
+    padding:12px 10px;
+    font-size:17px;
+    font-weight:600;
+    color:var(--ink);
+    outline:none;
+  }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .discount-row .inputrow{max-width:130px;}
+
+  .results{margin-top:6px;}
+  .rline{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .rline:last-of-type{border-bottom:none;}
+  .rline .label{font-size:13.5px;color:var(--steel);font-weight:600;}
+  .rline .label em{font-style:normal;font-weight:500;font-size:11px;color:var(--muted);}
+  .rline .value{font-size:16px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+
+  .total-card{
+    margin-top:14px;
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+    border-radius:14px;
+    padding:18px;
+    color:#fff;
+  }
+  .total-card .tlabel{
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#a9c2d4;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .total-card .tvalue{
+    font-size:30px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-.01em;
+  }
+  .total-card .tsub{
+    font-size:12px;
+    color:#a9c2d4;
+    margin-top:6px;
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  button{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    border:1.5px solid var(--navy);
+    background:transparent;
+    color:var(--navy);
+    cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  button.primary{
+    background:var(--navy);
+    color:#fff;
+  }
+  button:active{transform:translateY(1px);}
+
+  .footnote{
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:16px;
+    line-height:1.5;
+  }
+
+  @media (max-width:380px){
+    h1{font-size:20px;}
+    .total-card .tvalue{font-size:26px;}
+  }
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .actions{display:none;}
+    .card{box-shadow:none;border:1px solid #ccc;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">Premium Estimate</span>
+  <h1>Bobcat Insurance Calculator</h1>
+
+  <div class="card">
+    <div class="field">
+      <label for="si">Sum Insured</label>
+      <div class="inputrow">
+        <span class="prefix">₹</span>
+        <input id="si" type="number" value="" inputmode="numeric" placeholder="Enter amount">
+      </div>
+    </div>
+
+    <div class="field discount-row">
+      <label for="disc">Discount</label>
+      <div class="inputrow">
+        <input id="disc" type="number" value="" min="0" max="100" inputmode="numeric" placeholder="0">
+        <span class="prefix">%</span>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="rline">
+        <span class="label">CPM Premium <em>(incl. GST)</em></span>
+        <span class="value" id="cpmNet">₹ 0</span>
+      </div>
+      <div class="rline">
+        <span class="label">Transit Premium <em>(incl. GST)</em></span>
+        <span class="value" id="transitNet">₹ 0</span>
+      </div>
+    </div>
+
+    <div class="total-card">
+      <div class="tlabel">Total Premium (CPM + Transit)</div>
+      <div class="tvalue" id="grandTotal">₹ 0</div>
+      <div class="tsub">Inclusive of GST</div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="calc()" style="flex:1.4">Calculate</button>
+      <button onclick="resetCalc()">Reset</button>
+      <button onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <div class="footnote">Figures are indicative estimates and may vary from the final policy quote.</div>
+</div>
+
+<script>
+const fmt = n => '₹ ' + new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}).format(Math.round(n));
+
+function calc(){
+  const s = +document.getElementById('si').value || 0;
+  const d = (+document.getElementById('disc').value || 0) / 100;
+
+  const md = s * 0.0077, eq = s * 0.00011, stfi = s * 0.00044, tp = 680;
+  const cpmBase = ((md + tp) * (1 - d)) + eq + stfi;
+  const cpmNet = cpmBase * 1.18 + 1;
+
+  const transitBase = s * 0.00125;
+  const transitNet = transitBase * 1.18 + 1;
+
+  document.getElementById('cpmNet').textContent = fmt(cpmNet);
+  document.getElementById('transitNet').textContent = fmt(transitNet);
+  document.getElementById('grandTotal').textContent = fmt(cpmNet + transitNet);
+}
+
+function resetCalc(){
+  document.getElementById('si').value = '';
+  document.getElementById('disc').value = '';
+  document.getElementById('cpmNet').textContent = '—';
+  document.getElementById('transitNet').textContent = '—';
+  document.getElementById('grandTotal').textContent = '—';
+}
+
+resetCalc();
+</script>
+</body>
+</html>
